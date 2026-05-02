@@ -1,8 +1,20 @@
 import { cookies } from 'next/headers';
 import { User } from '@/models/User';
 import connectToDatabase from './mongodb';
+import mongoose from 'mongoose';
 
-export async function getSession() {
+export interface IUser {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  email: string;
+  password: string;
+  role: 'ADMIN' | 'MEMBER';
+  projectId: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export async function getSession(): Promise<IUser | null> {
   const cookieStore = await cookies();
   const userId = cookieStore.get('session_id')?.value;
   
@@ -10,16 +22,14 @@ export async function getSession() {
 
   await connectToDatabase();
   const user = await User.findById(userId).lean();
-  return user;
+  return user as unknown as IUser;
 }
 
-export async function canAccessProject(user: any, projectId: string) {
+export async function canAccessProject(user: IUser | null, projectId: string) {
   if (!user) return false;
-  // Admin can access everything, or strict project check?
-  // User requirements say "Users can ONLY access their project."
   return user.projectId.toString() === projectId;
 }
 
-export function isAdmin(user: any) {
+export function isAdmin(user: IUser | null) {
   return user?.role === 'ADMIN';
 }
