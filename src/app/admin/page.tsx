@@ -45,7 +45,7 @@ export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
   const [integrations, setIntegrations] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<Tab>('activity');
+  const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [stats] = useState({
     usersCount: 124,
     conversationCount: 842,
@@ -252,41 +252,63 @@ export default function AdminDashboard() {
 
                   {/* Integrations */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[
-                      { type: 'shopify' as const, label: 'Shopify', icon: ShoppingBag, color: 'green', desc: 'Sync orders, products, and customer sales data.' },
-                      { type: 'crm' as const, label: 'CRM (Nova)', icon: Database, color: 'blue', desc: 'Manage leads, pipeline, and customer interactions.' },
-                    ].map(({ type, label, icon: Icon, color, desc }) => {
-                      const enabled = type === 'shopify' ? integrations?.shopifyEnabled : integrations?.crmEnabled;
-                      return (
-                        <Card key={type} className="glass-card">
-                          <CardContent className="pt-6">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-3">
-                                <div className={cn("p-2.5 rounded-xl border", `bg-${color}-50 text-${color}-600 border-${color}-100`)}>
-                                  <Icon className="w-5 h-5" />
-                                </div>
-                                <span className="font-bold text-slate-800">{label}</span>
-                              </div>
-                              <button
-                                onClick={() => toggleIntegration(type)}
-                                className={cn(
-                                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                                  enabled ? `bg-${color}-500` : "bg-slate-200"
-                                )}
-                              >
-                                <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", enabled ? "translate-x-6" : "translate-x-1")} />
-                              </button>
+                    {/* Shopify */}
+                    <Card className="glass-card">
+                      <CardContent className="pt-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl border bg-green-50 text-green-600 border-green-100">
+                              <ShoppingBag className="w-5 h-5" />
                             </div>
-                            <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
-                            <div className={cn("mt-3 inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter border",
-                              enabled ? `bg-${color}-50 text-${color}-700 border-${color}-100` : "bg-slate-50 text-slate-400 border-slate-100"
-                            )}>
-                              {enabled ? "Connected" : "Offline"}
+                            <span className="font-bold text-slate-800">Shopify</span>
+                          </div>
+                          <button
+                            onClick={() => toggleIntegration('shopify')}
+                            className={cn(
+                              "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                              integrations?.shopifyEnabled ? "bg-green-500" : "bg-slate-200"
+                            )}
+                          >
+                            <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", integrations?.shopifyEnabled ? "translate-x-6" : "translate-x-1")} />
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed">Sync orders, products, and customer sales data.</p>
+                        <div className={cn("mt-3 inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter border",
+                          integrations?.shopifyEnabled ? "bg-green-50 text-green-700 border-green-100" : "bg-slate-50 text-slate-400 border-slate-100"
+                        )}>
+                          {integrations?.shopifyEnabled ? "Connected" : "Offline"}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* CRM */}
+                    <Card className="glass-card">
+                      <CardContent className="pt-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl border bg-blue-50 text-blue-600 border-blue-100">
+                              <Database className="w-5 h-5" />
                             </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+                            <span className="font-bold text-slate-800">CRM (Nova)</span>
+                          </div>
+                          <button
+                            onClick={() => toggleIntegration('crm')}
+                            className={cn(
+                              "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                              integrations?.crmEnabled ? "bg-blue-500" : "bg-slate-200"
+                            )}
+                          >
+                            <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", integrations?.crmEnabled ? "translate-x-6" : "translate-x-1")} />
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed">Manage leads, pipeline, and customer interactions.</p>
+                        <div className={cn("mt-3 inline-block px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter border",
+                          integrations?.crmEnabled ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-slate-50 text-slate-400 border-slate-100"
+                        )}>
+                          {integrations?.crmEnabled ? "Connected" : "Offline"}
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
 
                   {/* Namespace Card */}
