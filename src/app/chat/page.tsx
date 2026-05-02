@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { 
   Send, 
   Plus, 
@@ -31,6 +31,7 @@ import { TypingMessage } from '@/components/TypingMessage';
 function ChatContent() {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const projectIdParam = searchParams.get('projectId');
   
   const [user, setUser] = useState<any>(null);
@@ -59,6 +60,11 @@ function ChatContent() {
     };
     fetchUser();
   }, []);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  };
 
   const effectiveProjectId = projectIdParam || user?.projectId;
 
@@ -447,7 +453,7 @@ function ChatContent() {
                   <p className="text-sm font-bold text-white truncate">{user?.name}</p>
                   <p className="text-[10px] text-slate-500 truncate uppercase tracking-tighter">{user?.role} ACCOUNT</p>
                 </div>
-                <Button variant="ghost" size="icon" className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 h-8 w-8">
+                <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout" className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 h-8 w-8">
                   <LogOut className="w-4 h-4" />
                 </Button>
               </div>

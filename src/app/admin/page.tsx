@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Users, 
   MessageSquare, 
@@ -16,7 +17,8 @@ import {
   Zap,
   Globe,
   Bell,
-  Plus
+  Plus,
+  LogOut
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +26,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [config, setConfig] = useState<any>(null);
   const [integrations, setIntegrations] = useState<any>(null);
@@ -82,6 +85,11 @@ export default function AdminDashboard() {
     });
     const data = await res.json();
     setIntegrations(data);
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
   };
 
   const renderWidget = (widgetId: string) => {
@@ -249,8 +257,17 @@ export default function AdminDashboard() {
             </div>
           ))}
         </div>
-        <div className="w-12 h-12 rounded-full border-2 border-slate-700 p-0.5">
-          <img src={`https://i.pravatar.cc/100?u=${user?._id}`} className="rounded-full" alt="avatar" />
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 rounded-full border-2 border-slate-700 p-0.5">
+            <img src={`https://i.pravatar.cc/100?u=${user?._id}`} className="rounded-full" alt="avatar" />
+          </div>
+          <button
+            onClick={handleLogout}
+            title="Logout"
+            className="w-10 h-10 rounded-2xl flex items-center justify-center text-slate-500 hover:bg-red-500/10 hover:text-red-400 transition-all"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </aside>
 
